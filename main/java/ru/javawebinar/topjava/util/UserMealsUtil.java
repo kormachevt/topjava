@@ -74,47 +74,38 @@ public class UserMealsUtil {
     public static List<UserMealWithExcess> filteredByCycle(List<UserMeal> meals, LocalTime startTime, LocalTime endTime,
                                                            int caloriesPerDay) {
         Map<LocalDate, List<UserMeal>> mealsByDate = new HashMap<>();
-        Map<LocalDate, List<UserMealWithExcess>> excessMealsByDate = new HashMap<>();
+        Map<LocalDateTime, UserMealWithExcess> excessMealsByDateTime = new HashMap<>();
         Map<LocalDate, Integer> caloriesByDate = new HashMap<>();
         Map<LocalDate, Boolean> isExcessByDate = new HashMap<>();
 
         for (UserMeal meal : meals) {
-            LocalDate date = meal.getDateTime().toLocalDate();
+            LocalDateTime dateTime = meal.getDateTime();
+            LocalDate date = dateTime.toLocalDate();
             List<UserMeal> mealsOfDate = mealsByDate.getOrDefault(date, new ArrayList<>());
-            List<UserMealWithExcess> excessMealsOfDate = excessMealsByDate.getOrDefault(date, new ArrayList<>());
-            mealsOfDate.add(meal);
 
             int calories = caloriesByDate.getOrDefault(date, 0);
             calories += meal.getCalories();
             caloriesByDate.put(date, calories);
 
-            boolean currentIsExcess = calories > caloriesPerDay;
             boolean oldIsExcess = isExcessByDate.getOrDefault(date, false);
+            boolean currentIsExcess = calories > caloriesPerDay;
             isExcessByDate.put(date, currentIsExcess);
 
-            List<UserMealWithExcess> newExcessMealsOfDate;
+            mealsOfDate.add(meal);
+            mealsByDate.put(date, mealsOfDate);
+
             if (currentIsExcess && !oldIsExcess) {
-                List<UserMealWithExcess> updatedExcessMealsOfDate = new ArrayList<>();
                 for (UserMeal userMeal : mealsOfDate) {
                     if (isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime)) {
-                        updatedExcessMealsOfDate.add(new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), true));
+                        excessMealsByDateTime.put(userMeal.getDateTime(), new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), true));
                     }
                 }
-                newExcessMealsOfDate = updatedExcessMealsOfDate;
             } else {
                 if (isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
-                    excessMealsOfDate.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), currentIsExcess));
+                    excessMealsByDateTime.put(dateTime, new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), currentIsExcess));
                 }
-                newExcessMealsOfDate = excessMealsOfDate;
             }
-            mealsByDate.put(date, mealsOfDate);
-            excessMealsByDate.put(date, newExcessMealsOfDate);
         }
-
-        List<UserMealWithExcess> excessMealsList = new ArrayList<>();
-        for (List<UserMealWithExcess> excessMeals : excessMealsByDate.values()) {
-            excessMealsList.addAll(excessMeals);
-        }
-        return excessMealsList;
+        return new ArrayList<>(excessMealsByDateTime.values());
     }
 }
