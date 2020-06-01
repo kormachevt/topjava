@@ -34,7 +34,9 @@ public class UserMealsUtil {
 
         System.out.println("By streams");
         System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
-//        System.out.println(filteredByStream(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+
+        System.out.println("By stream");
+        System.out.println(filteredByStream(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime,
@@ -107,5 +109,10 @@ public class UserMealsUtil {
             }
         }
         return new ArrayList<>(excessMealsByDateTime.values());
+    }
+
+    public static List<UserMealWithExcess> filteredByStream(List<UserMeal> meals, LocalTime startTime, LocalTime endTime,
+                                                            int caloriesPerDay) {
+        return meals.stream().collect(new ExcessCollector(caloriesPerDay, startTime, endTime));
     }
 }
