@@ -43,17 +43,13 @@ public class MealServlet extends HttpServlet {
         String dateTimeParam = request.getParameter("dateTime");
         String descriptionParam = request.getParameter("description");
         String caloriesParam = request.getParameter("calories");
-        int id = isNotEmptyString(idParam) ? Integer.parseInt(idParam) : -1;
-
-
-        boolean isCreate = id == -1;
-        Meal meal = isCreate ? new Meal(LocalDateTime.parse(dateTimeParam), descriptionParam, Integer.parseInt(caloriesParam)) : storage.get(id);
+        int id = isNotEmptyString(idParam) ? Integer.parseInt(idParam) : 0;
+        boolean isCreate = id == 0;
+        Meal meal = new Meal(LocalDateTime.parse(dateTimeParam), descriptionParam, Integer.parseInt(caloriesParam));
         if (isCreate) {
             storage.add(meal);
         } else {
-            meal.setDateTime(LocalDateTime.parse(dateTimeParam));
-            meal.setCalories(Integer.parseInt(caloriesParam));
-            meal.setDescription(descriptionParam);
+            meal.setId(id);
             storage.update(meal);
         }
         response.sendRedirect("meals");
@@ -72,25 +68,20 @@ public class MealServlet extends HttpServlet {
             return;
         }
 
-        Meal meal;
         String idParam = request.getParameter("id");
-        int id = isNotEmptyString(idParam) ? Integer.parseInt(idParam) : -1;
+        int id = isNotEmptyString(idParam) ? Integer.parseInt(idParam) : 0;
         switch (action) {
             case "delete":
                 storage.delete(id);
                 response.sendRedirect("meals");
                 return;
-            case "view":
-                meal = storage.get(id);
-                break;
             case "edit":
-                meal = id == -1 ? new Meal() : storage.get(id);
-                break;
+                Meal meal = id == 0 ? new Meal() : storage.get(id);
+                request.setAttribute("meal", meal);
+                request.getRequestDispatcher("edit.jsp").forward(request, response);
+                return;
             default:
-                throw new IllegalArgumentException("Action " + action + "is illegal");
+                response.sendRedirect("meals");
         }
-        request.setAttribute("meal", meal);
-        request.getRequestDispatcher(
-                ("view".equals(action) ? "view.jsp" : "edit.jsp")).forward(request, response);
     }
 }

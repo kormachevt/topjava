@@ -16,7 +16,6 @@
 <table class="minimalistBlack">
     <thead>
     <tr>
-        <th>Номер</th>
         <th>Дата/Время</th>
         <th>Описание</th>
         <th>Калории</th>
@@ -27,9 +26,8 @@
     <tbody>
     <c:forEach items="${mealsList}" var="mealTo">
         <jsp:useBean id="mealTo" type="ru.javawebinar.topjava.model.MealTo"/>
-        <c:set var="color" value="${mealTo.excess ? 'red' :'blue'}"/>
+        <c:set var="color" value="${mealTo.excess ? 'red' :'green'}"/>
         <tr style="color:${color}">
-            <td><a href="meals?id=${mealTo.id}&action=view">${mealTo.id}</a></td>
             <td><javatime:format value="${mealTo.dateTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>

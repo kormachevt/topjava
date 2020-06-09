@@ -4,12 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="styles.css">
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <title>Прием пищи #${meal.id}</title>
+    <title>Прием пищи</title>
 </head>
 <body>
 <h3><a href="index.html">Главная</a></h3>
 <hr>
-<h2>Прием пищи #${meal.id}</h2>
+<h2>Прием пищи</h2>
 <form method="post" action="meals" id="createForm" enctype="application/x-www-form-urlencoded">
     <input type="hidden" name="id" value="${meal.id}">
 
