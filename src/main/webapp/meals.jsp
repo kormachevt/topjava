@@ -11,7 +11,7 @@
 <body>
 <h3><a href="index.html">Главная</a></h3>
 <hr>
-<h2>Meals</h2>
+<h2>Моя еда</h2>
 
 <table class="minimalistBlack">
     <thead>
