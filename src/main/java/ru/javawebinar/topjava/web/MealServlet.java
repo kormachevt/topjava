@@ -58,16 +58,6 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action == null) {
-            List<MealTo> mealsList = MealsUtil.filteredByStreams(storage.getAll(),
-                                                                 LocalTime.MIN,
-                                                                 LocalTime.MAX,
-                                                                 2000);
-            request.setAttribute("mealsList", mealsList);
-            request.getRequestDispatcher("meals.jsp").forward(request, response);
-            return;
-        }
-
         String idParam = request.getParameter("id");
         int id = isNotEmptyString(idParam) ? Integer.parseInt(idParam) : 0;
         switch (action) {
@@ -81,7 +71,12 @@ public class MealServlet extends HttpServlet {
                 request.getRequestDispatcher("edit.jsp").forward(request, response);
                 return;
             default:
-                response.sendRedirect("meals");
+                List<MealTo> mealsList = MealsUtil.filteredByStreams(storage.getAll(),
+                                                                     LocalTime.MIN,
+                                                                     LocalTime.MAX,
+                                                                     2000);
+                request.setAttribute("mealsList", mealsList);
+                request.getRequestDispatcher("meals.jsp").forward(request, response);
         }
     }
 }

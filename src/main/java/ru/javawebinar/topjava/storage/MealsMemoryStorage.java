@@ -32,8 +32,12 @@ public class MealsMemoryStorage implements MealsStorage {
 
     @Override
     public Meal update(Meal meal) {
-        mealsById.put(meal.getId(), meal);
-        return meal;
+        int id = meal.getId();
+        if (mealsById.containsKey(id)) {
+            mealsById.put(id, meal);
+            return meal;
+        }
+        throw new IllegalArgumentException("Meal not exist");
     }
 
     @Override
