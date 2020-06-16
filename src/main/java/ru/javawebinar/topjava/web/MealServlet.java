@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
-import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 public class MealServlet extends HttpServlet {
@@ -69,9 +67,9 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll");
-                request.setAttribute("meals",
-                                     MealsUtil.getTos(repository.getAll(authUserId()), authUserCaloriesPerDay()));
-                request.getRequestDispatcher("/meals.jsp").forward(request, response);
+//                request.setAttribute("meals",
+//                                     MealsUtil.getTos(repository.getAllFiltered(authUserId()), authUserCaloriesPerDay()));
+//                request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
     }
