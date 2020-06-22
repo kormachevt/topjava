@@ -3,9 +3,11 @@ package ru.javawebinar.topjava.util;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
@@ -28,11 +30,17 @@ public class DateTimeUtil {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }
 
-    public static @Nullable LocalDate parseLocalDate(@Nullable String str) {
+    public static @Nullable
+    LocalDate parseLocalDate(@Nullable String str) {
         return StringUtils.isEmpty(str) ? null : LocalDate.parse(str);
     }
 
-    public static @Nullable LocalTime parseLocalTime(@Nullable String str) {
+    public static @Nullable
+    LocalTime parseLocalTime(@Nullable String str) {
         return StringUtils.isEmpty(str) ? null : LocalTime.parse(str);
+    }
+
+    public static Timestamp toTimestamp(LocalDateTime dateTime) {
+        return new Timestamp(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli());
     }
 }
