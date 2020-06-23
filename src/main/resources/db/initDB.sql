@@ -30,11 +30,14 @@ create table meals
     id integer default nextval('global_seq'::regclass) not null
         constraint meals_pk
             primary key,
-    date_time timestamp default now() not null,
-    description varchar not null,
-    calories integer not null,
-    user_id integer not null
+    date_time timestamp default now()                  not null,
+    description varchar                                not null,
+    calories integer                                   not null,
+    user_id integer                                    not null
         constraint meals_user_id_fk
             references users
             on delete cascade
 );
+
+create unique index meals_user_id_date_time_index
+    on meals (user_id, date_time);
