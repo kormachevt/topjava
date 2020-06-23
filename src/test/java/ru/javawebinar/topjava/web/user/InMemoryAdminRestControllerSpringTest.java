@@ -13,7 +13,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-@ContextConfiguration("classpath:spring/spring-app.xml")
+@ContextConfiguration("classpath:spring/spring-test.xml")
 @RunWith(SpringRunner.class)
 public class InMemoryAdminRestControllerSpringTest {
 
@@ -24,18 +24,18 @@ public class InMemoryAdminRestControllerSpringTest {
     private InMemoryUserRepository repository;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         repository.init();
     }
 
     @Test
-    public void delete() throws Exception {
+    public void delete() {
         controller.delete(USER_ID);
         Assert.assertNull(repository.get(USER_ID));
     }
 
     @Test
-    public void deleteNotFound() throws Exception {
+    public void deleteNotFound() {
         Assert.assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
     }
 }
