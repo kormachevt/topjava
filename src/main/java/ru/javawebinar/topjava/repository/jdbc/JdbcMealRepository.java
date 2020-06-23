@@ -59,7 +59,10 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return jdbcTemplate.update("DELETE FROM meals WHERE id=?", id) != 0;
+        MapSqlParameterSource map = new MapSqlParameterSource()
+                .addValue("id", id)
+                .addValue("user_id", userId);
+        return namedParameterJdbcTemplate.update("DELETE FROM meals WHERE id=:id AND user_id=:user_id", map) != 0;
     }
 
     @Override

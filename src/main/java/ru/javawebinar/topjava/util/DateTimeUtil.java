@@ -23,7 +23,7 @@ public class DateTimeUtil {
     }
 
     public static LocalDateTime atStartOfNextDayOrMax(LocalDate localDate) {
-        return localDate != null ? localDate.plus(1, ChronoUnit.DAYS).atStartOfDay() : MAX_DATE;
+        return localDate != null ? localDate.plus(1, ChronoUnit.DAYS).atStartOfDay().minusNanos(1) : MAX_DATE;
     }
 
     public static String toString(LocalDateTime ldt) {
@@ -41,6 +41,6 @@ public class DateTimeUtil {
     }
 
     public static Timestamp toTimestamp(LocalDateTime dateTime) {
-        return new Timestamp(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli());
+        return new Timestamp(dateTime.toInstant(ZoneOffset.of("+3")).toEpochMilli());
     }
 }
