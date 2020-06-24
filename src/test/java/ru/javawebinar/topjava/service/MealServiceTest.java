@@ -52,14 +52,24 @@ public class MealServiceTest {
     }
 
     @Test
+    public void getAnotherUsersMeal() throws Exception {
+        assertThrows(NotFoundException.class, () -> service.get(MEAL_02.getId(), ADMIN_ID));
+    }
+
+    @Test
     public void delete() {
         service.delete(MEAL_03.getId(), USER_ID);
         assertNull(repository.get(MEAL_03.getId(), USER_ID));
     }
 
     @Test
-    public void deleteNotFound() {
+    public void deleteAnotherUsersMeal() {
         assertThrows(NotFoundException.class, () -> service.delete(MEAL_02.getId(), ADMIN_ID));
+    }
+
+    @Test
+    public void deleteNotFound() {
+        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, ADMIN_ID));
     }
 
 
