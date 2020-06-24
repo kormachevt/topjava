@@ -10,13 +10,10 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.toTimestamp;
-
-@Repository
+@Repository("mealRepository")
 public class JdbcMealRepository implements MealRepository {
 
     private static final BeanPropertyRowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
@@ -39,7 +36,7 @@ public class JdbcMealRepository implements MealRepository {
     public Meal save(Meal meal, int userId) {
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", meal.getId())
-                .addValue("date_time", toTimestamp(meal.getDateTime()))
+                .addValue("date_time", meal.getDateTime())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
                 .addValue("user_id", userId);
@@ -86,15 +83,13 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        Timestamp startTs = toTimestamp(startDate);
-        Timestamp endTs = toTimestamp(endDate);
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("user_id", userId)
-                .addValue("start_ts", startTs)
-                .addValue("end_ts", endTs);
+                .addValue("start_date", startDate)
+                .addValue("end_date", endDate);
         return namedParameterJdbcTemplate.query("SELECT * FROM meals " +
                                                         "WHERE user_id=:user_id " +
-                                                        "AND date_time BETWEEN :start_ts AND :end_ts " +
+                                                        "AND (date_time >= :start_date AND date_time < :end_date) " +
                                                         "ORDER BY date_time DESC", map, ROW_MAPPER);
     }
 }

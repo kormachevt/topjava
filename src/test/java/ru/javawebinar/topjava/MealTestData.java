@@ -33,11 +33,12 @@ public class MealTestData {
 
 
     public static Meal getNew() {
-        return new Meal(null, LocalDateTime.now(), "Прием пищи", 999);
+        return new Meal(null, LocalDateTime.of(2020, Month.FEBRUARY, 1, 10, 0), "Прием пищи", 999);
     }
 
     public static Meal getUpdated() {
         Meal updated = new Meal(MEAL_04);
+        updated.setDateTime(LocalDateTime.of(2020, Month.FEBRUARY, 2, 20, 0));
         updated.setDescription("Новый прием пищи");
         updated.setCalories(444);
         return updated;
