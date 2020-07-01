@@ -1,7 +1,16 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AssumptionViolatedException;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -12,6 +21,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -28,6 +38,47 @@ public class MealServiceTest {
 
     @Autowired
     private MealService service;
+
+    protected static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+    private static final StringBuilder result = new StringBuilder();
+
+    @ClassRule
+    public static TestRule classWatchman = new TestWatcher() {
+        @Override
+        protected void finished(Description desc) {
+            System.out.println("============================================================================");
+            System.out.println("Suite completed!");
+            System.out.println("============================================================================");
+            log.info(result.insert(0, "\n").toString());
+        }
+    };
+    @Rule
+    public Stopwatch stopwatch = new Stopwatch() {
+        @Override
+        protected void succeeded(long nanos, Description description) {
+
+            logInfo(description, "success", nanos);
+        }
+
+        @Override
+        protected void failed(long nanos, Throwable e, Description description) {
+            logInfo(description, "fail", nanos);
+        }
+
+        @Override
+        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
+            logInfo(description, "skipped", nanos);
+        }
+    };
+
+    private static void logInfo(Description description, String status, long nanos) {
+        String testName = description.getMethodName();
+        String message = String.format("[%s] - [%s] - %d ms",
+                                       status, testName, TimeUnit.NANOSECONDS.toMillis(nanos));
+        result.append(message).append("\n");
+        log.info(message);
+    }
+
 
     @Test
     public void delete() throws Exception {

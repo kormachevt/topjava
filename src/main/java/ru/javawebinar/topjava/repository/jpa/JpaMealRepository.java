@@ -7,7 +7,6 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,16 +43,11 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal;
-        try {
-            meal = em.createNamedQuery(Meal.GET, Meal.class)
-                    .setParameter("id", id)
-                    .setParameter("user_id", userId)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            meal = null;
+        Meal meal = em.find(Meal.class, id);
+        if (meal == null) {
+            return null;
         }
-        return meal;
+        return userId == meal.getUser().getId() ? meal : null;
     }
 
     @Override
