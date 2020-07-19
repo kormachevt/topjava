@@ -5,6 +5,9 @@ import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -23,13 +26,23 @@ import static ru.javawebinar.topjava.util.ValidationUtil.getRootCause;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ActiveProfiles(resolver = ActiveDbProfileResolver.class)
-abstract public class AbstractServiceTest {
+abstract public class AbstractServiceTest implements InitializingBean {
 
     @ClassRule
     public static ExternalResource summary = TimingRules.SUMMARY;
 
     @Rule
     public Stopwatch stopwatch = TimingRules.STOPWATCH;
+
+    @Autowired
+    private Environment env;
+
+    public static Environment environment;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        environment = env;
+    }
 
     //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
     public <T extends Throwable> void validateRootCause(Runnable runnable, Class<T> rootExceptionClass) {
