@@ -8,7 +8,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.JpaUtil;
+import ru.javawebinar.topjava.repository.IJpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
@@ -27,13 +27,13 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired(required = false)
-    protected JpaUtil jpaUtil;
+    @Autowired
+    protected IJpaUtil jpaUtil;
 
     @Before
     public void setUp() throws Exception {
-        if (!Set.of(environment.getActiveProfiles()).contains("jdbc")) {
-            cacheManager.getCache("users").clear();
+        cacheManager.getCache("users").clear();
+        if (!isJdbc()) {
             jpaUtil.clear2ndLevelHibernateCache();
         }
     }
@@ -97,7 +97,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException() throws Exception {
-        Assume.assumeFalse(Set.of(environment.getActiveProfiles()).contains("jdbc"));
+        Assume.assumeFalse(isJdbc());
         validateRootCause(() -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.USER)), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new User(null, "User", "  ", "password", Role.USER)), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.USER)), ConstraintViolationException.class);
