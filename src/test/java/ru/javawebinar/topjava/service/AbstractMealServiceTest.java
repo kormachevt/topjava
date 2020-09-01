@@ -86,7 +86,7 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
                 LocalDate.of(2020, Month.JANUARY, 30),
                 LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
-                                 MEAL3, MEAL2, MEAL1);
+                MEAL3, MEAL2, MEAL1);
     }
 
     @Test
